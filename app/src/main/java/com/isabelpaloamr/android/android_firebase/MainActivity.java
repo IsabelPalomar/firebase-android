@@ -1,4 +1,5 @@
 package com.isabelpaloamr.android.android_firebase;
+
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,7 +9,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,9 +36,37 @@ public class MainActivity extends AppCompatActivity {
 
         //Firebase setup
         Firebase.setAndroidContext(this);
-        Firebase myFirebaseRef = new Firebase("https://androidfirebase-test.firebaseio.com/");
+        Firebase myFirebaseRef = new Firebase("https://path.firebaseio.com/");
 
-        myFirebaseRef.child("message").setValue("Do you have data? You'll love Firebase.");
+        myFirebaseRef.child("message").setValue("Holi.");
+
+        myFirebaseRef.child("message").addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                System.out.println(snapshot.getValue());  //prints "Do you have data? You'll love Firebase."
+            }
+
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+
+        });
+
+        myFirebaseRef.createUser("bobtony@firebase.com", "correcthorsebatterystaple", new Firebase.ValueResultHandler<Map<String, Object>>() {
+            @Override
+            public void onSuccess(Map<String, Object> result) {
+                System.out.println("Successfully created user account with uid: " + result.get("uid"));
+            }
+
+            @Override
+            public void onError(FirebaseError firebaseError) {
+                // there was an error
+                System.out.println("BIG ERROR" +firebaseError);
+            }
+        });
+
     }
 
     @Override
